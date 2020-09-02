@@ -1,5 +1,6 @@
 const CartRepository = require('../repositories/CartRepository');
 const DrugCartRepository = require('../repositories/DrugCartRepository')
+const {findAsync} = require('../utils')
 
 let get = async (req, res) => {
     let carts = await CartRepository.get();
@@ -48,20 +49,20 @@ let addDrugToCart = async(req,res) =>{
 
     //checking if the actual drug is in cart (we have reference just for DrugCart in Cart)
 
-    let isPresent = cart.drugs.filter(async drugCartId =>{
+    let isPresent =await findAsync(cart.drugs, (async drugCartId =>{
         let drugCart = await DrugCartRepository.findById(drugCartId);
         return drugCart.drug == drugId;
-    })
+    }));
 
     let drugCart;
     let newCart;
-    if(isPresent.length===0){//if is not present, we want to create one
+    if(!isPresent){//if is not present, we want to create one
        
        drugCart = await DrugCartRepository.create({ quantity: quantity, drug: drugId,cart: cartId});
        newCart = await CartRepository.addDrugCart(cartId,drugCart.id);
        
     }else{//if is present, we want to update the qauntity
-        existingDrugCart = await DrugCartRepository.findById(isPresent[0]);
+        existingDrugCart = await DrugCartRepository.findById(isPresent);
         let newQuantity = existingDrugCart.quantity + quantity;
         drugCart =  await DrugCartRepository.update(existingDrugCart.id,{quantity:newQuantity});
         newCart = cart;
