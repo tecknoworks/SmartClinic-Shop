@@ -1,6 +1,7 @@
 var Cart = require('../models/Cart');
 var Repository = require('./Repository');
 const DrugCart = require('../models/DrugCart');
+const {asyncFilter} = require('../utils');
 
 class CartRepository extends Repository {
     constructor(model) {
@@ -19,7 +20,9 @@ class CartRepository extends Repository {
         const drugCart = await DrugCart.findByIdAndRemove(drugId);
         const cart = await this.model.findById(cartId);
 
-        let drugs = cart.drugs.filter(drug => {return drug != drugId});
+        const drugs = await asyncFilter(cart.drugs, async(drug) => {
+            return drug != drugId
+        });
         cart.drugs = drugs;
 
         const newCart = await cart.save();

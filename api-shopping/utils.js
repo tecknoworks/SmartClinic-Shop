@@ -5,4 +5,7 @@ async function findAsync(arr, asyncCallback) {
     return arr[index];
   }
 
-  module.exports = {findAsync};
+  const asyncFilter = async (arr, predicate) => Promise.all(arr.map(predicate))
+	.then((results) => arr.filter((_v, index) => results[index]));
+
+  module.exports = {findAsync, asyncFilter};
