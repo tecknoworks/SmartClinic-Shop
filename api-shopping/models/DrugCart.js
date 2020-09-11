@@ -1,7 +1,14 @@
 var mongoose = require('mongoose');
+var Float = require('mongoose-float').loadType(mongoose, 2);
 
 const durgCartSchema = new mongoose.Schema(
     {
+        name:{
+            type: String,
+        },
+        price:{
+            type: Float,
+        },
         quantity: {
             type: Number,
             required: true

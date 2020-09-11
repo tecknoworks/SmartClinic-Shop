@@ -6,6 +6,7 @@ const CartService = require('../services/CartService');
 router.get("/", CartService.get);
 router.get("/:id", CartService.getById);
 router.get("/user/:id", CartService.getByUserId);
+router.get("/drugs/:id", CartService.drugsByCart);
 
 router.post("/", CartService.post);
 router.post("/addDrug", CartService.addDrugToCart);

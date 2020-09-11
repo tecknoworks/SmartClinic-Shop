@@ -12,6 +12,10 @@ class DrugCartRepository extends Repository {
         return await this.model.find({drug : drugId})
     }
 
+    async findByCartId(cart){
+        return await this.model.find({cart:cart}).exec();
+    }
+
     async update(id, data){
         const drug = await this.model.findById(id);
         if(!drug) throw new Error("Drug in cart not found!");

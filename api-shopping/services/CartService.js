@@ -36,12 +36,24 @@ let remove = async (req, res) => {
     res.json(cart);
 }
 
+let drugsByCart = async(req,res) => {
+    let id = req.params.id;
+    let drugCarts = await DrugCartRepository.findByCartId(id);
+
+    res.json(drugCarts);
+}
+
 let addDrugToCart = async(req,res) =>{
     let data = { ...req.body };
     
     let cartId = data.cart;//the cart we want to insert
     let drugId = data.drug;//the actual drug we want to insert
     let quantity = data.quantity;//the quantity
+    let name = data.name;
+    let price = data.price;
+
+    console.log(name);
+    console.log(price);
 
     //validate
     let cart = await CartRepository.findById(cartId);
@@ -58,7 +70,7 @@ let addDrugToCart = async(req,res) =>{
     let newCart;
     if(!isPresent){//if is not present, we want to create one
        
-       drugCart = await DrugCartRepository.create({ quantity: quantity, drug: drugId,cart: cartId});
+       drugCart = await DrugCartRepository.create({name:name,price:price, quantity: quantity, drug: drugId,cart: cartId});
        newCart = await CartRepository.addDrugCart(cartId,drugCart.id);
        
     }else{//if is present, we want to update the qauntity
@@ -82,8 +94,8 @@ let deleteDrugFromCart = async(req,res) =>{
     if(!drug) throw new Error("Drug not found!");
 
     let newCart =await  CartRepository.removeDrugCart(cartId, drugId);
-    res.json(newCart);
+    res.json({cart: newCart, drug: drug});
 }
 
 
-module.exports = { get, getById, getByUserId, post, remove, addDrugToCart, deleteDrugFromCart};
+module.exports = { get, getById, getByUserId, post, remove, addDrugToCart, deleteDrugFromCart,drugsByCart};
